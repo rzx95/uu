@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>塔塔是不是最漂亮的？</title>
+    <style>
+        body {
+            background-color: #f1d5da;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+       .container {
+            width: 90%;
+            max-width: 500px;
+        }
+
+        #mainImage {
+            width: 100%;
+            max-width: 200px;
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            font-size: 5vw;
+            color: #68495b;
+            margin: 20px 0;
+        }
+
+        button {
+            font-size: 5vw;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        #yes {
+            background-color: #d4818e;
+            color: white;
+        }
+
+        #no {
+            background-color: #6784b1;
+            color: white;
+            position: relative;
+        }
+
+       .yes-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+       .yes-text {
+            font-size: 7vw;
+        }
+
+       .yes-image {
+            width: 50%;
+            max-width: 300px;
+        }
+
+        @media (min-width: 768px) {
+            body {
+                display: block;
+            }
+
+           .container {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: auto;
+                max-width: none;
+            }
+
+            #mainImage {
+                width: 200px;
+            }
+
+            h1 {
+                font-size: 28px;
+                margin: 20px 0;
+            }
+
+            button {
+                font-size: 18px;
+            }
+
+           .yes-text {
+                font-size: 36px;
+            }
+
+           .yes-image {
+                width: 300px;
+            }
+        }
+        
+        .div_btn { position: fixed; cursor: pointer; width: 2.5rem; height: 2.5rem; border: 2px solid #fff; border-radius: 50%; font-size: 1rem; line-height: 2.3rem; text-align: center; z-index: 999; opacity: 0.7; background-color: rgba(0,0,0,.3); } .div_btn a{color:#fff;text-decoration:none;} #btn-make { bottom: 8.5rem; right: 18px; } #div_support { bottom: 4rem; right: 18px; } #btn-make a,#div_support a{text-shadow: 1px 1px 1px #000;}#action-make { bottom: 5rem; position: fixed; width: 100%; height: 80px; z-index: 99999; text-align: center; font-size: 1.5rem; } #action-make .btn1 { color: #fff; background-color: #2196f3; } #action-make .btn-return { float: left; border-radius: 0 2rem 2rem 0; padding: 0.8rem 2.4rem 0.8rem 2.4rem; box-shadow: 0.2rem 0 0.2rem #888888; } #action-make .btn-make { float: right; border-radius: 2rem 0 0 2rem; padding: 0.8rem 1.5rem 0.8rem 1.5rem; box-shadow: 0 0.2rem 0.2rem #888888; }@keyframes text-flicker { 0% {opacity: 0} 49% {opacity: 0} 50% {opacity: 1} }.cur-end{animation: text-flicker 0.8s infinite;}#btn-hot { bottom: 12.5rem; right: 18px; background-color: #bf1e1e; color: #fff; font-weight: bold; }
+        @media screen and (min-width: 600px) {
+            body{text-align:justify;}
+        }
+        
+    </style>
+</head>
+
+<body>
+    <div id="container" class="container">
+        <img id="mainImage" src="static/picture/e59d227b827a4e93bc668317e9d894fb.gif">
+        <h1 id="question">塔塔是不是最漂亮的？</h1>
+        <div id="buttons" style="display: inline-flex;">
+            <button id="yes">是啊</button>
+            <button id="no" style="transition: transform 0.1s ease 0s;">不是</button>
+        </div>
+    </div>
+
+    <div class="yes-screen" style="display: none;">
+        <h1 class="yes-text">嘻嘻嘻！乖孩子~(/≧▽≦)/♡︎ᐝ </h1>
+        <img src="static/picture/v2-4f8cf95a226175ba3451ee0080a39ad7_720w.png" alt="拥抱" class="yes-image">
+</div>
+
+    <audio id="noSound" src="http://wan55.cn/template/text/pick/noSound.mp3"></audio>
+    <audio id="yesSound" src="https://sf6-cdn-tos.douyinstatic.com/obj/tos-cn-ve-2774/d23528b594f54002b6571914e05bd304"></audio>
+    <audio id="bbSound" src="http://wan55.cn/template/text/pick/bb.mp3"></audio>
+
+    <script>
+        let yesButton = document.getElementById("yes");
+        let noButton = document.getElementById("no");
+        let questionText = document.getElementById("question");
+        let mainImage = document.getElementById("mainImage");
+        let container = document.getElementById("container");
+        let noSound = document.getElementById("noSound");
+        let yesSound = document.getElementById("yesSound");
+        let bbSound = document.getElementById("bbSound");
+
+        let clickCount = 0; // 记录点击 No 的次数
+        // No 按钮的文字变化
+        const noTexts1 = [
+            "点错了？",
+            "大胆！",
+            "承认吧孩子",
+        ];
+
+        let noTexts = noTexts1;
+
+        let pics1 = [
+            "https://img0.baidu.com/it/u=3425379424,3777422610&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=833",
+            "https://img2.baidu.com/it/u=3576307280,1386833677&fm=253&fmt=auto&app=138&f=JPEG?w=514&h=500",
+            "https://img2.baidu.com/it/u=2499854713,39610523&fm=253&fmt=auto&app=138&f=JPEG?w=256&h=258",
+            "https://picx.zhimg.com/80/v2-0811786bf412937061815951daceb382_720w.jpeg",
+            "https://picx.zhimg.com/80/v2-da81e4f0c31e2b2fae0ecd6691bdb423_720w.gif"
+        ];
+
+        let pics = pics1;
+
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        mainImage.src = pics[0];
+
+        // No 按钮点击事件
+        noButton.addEventListener("click", function () {
+            clickCount++;
+            noSound.play();
+
+            // No 文案变化（前 3 次变化）
+            if (clickCount <= 3) {
+                noButton.innerText = noTexts[clickCount - 1];
+            }
+
+            if (clickCount == 1) {
+                noButton.style.order = "1";
+                yesButton.style.order = "2";
+                noButton.style.padding = "15px 30px";
+            } else {
+                noButton.style.order = "2";
+                yesButton.style.order = "1";
+            }
+
+            // 图片变化（前 3 次变化）
+            if (clickCount == 1) {
+                mainImage.src = pics[1];
+            }
+            if (clickCount == 2) {
+                mainImage.src = pics[2];
+            }
+            if (clickCount == 3) {
+                mainImage.src = pics[3];
+                yesButton.innerText = "不是";
+                // 开始移动
+                moveTo();
+            }
+        });
+
+        yesButton.addEventListener("click", function () {
+            if (this.innerText === "不是") {
+                this.innerText = "是啊";
+                bbSound.play();
+                setTimeout(function () {
+                    container.style.display = 'none';
+                    document.querySelector(".yes-image").src = pics[4];
+                    document.querySelector(".yes-screen").style.display = "flex";
+                    document.body.style.overflow = "hidden"; // 禁止滚动，保持页面美观
+                    yesSound.play();
+                }, 1200);
+            } else {
+                container.style.display = 'none';
+                document.querySelector(".yes-image").src = pics[4];
+                document.querySelector(".yes-screen").style.display = "flex";
+                document.body.style.overflow = "hidden"; // 禁止滚动，保持页面美观
+                yesSound.play();
+            }
+        });
+
+        function moveTo() {
+            noButton.style.position = "absolute";
+            let timeoutID = setInterval(function () {
+                var a = getRandomInt(-300, 150);
+                var b = getRandomInt(-300, 300);
+                noButton.style.transform = "translate(" + a + "px, " + b + "px)";
+                console.log("translate(" + a + "px, " + b + "px)");
+            }, 120);
+
+            setTimeout(function () {
+                clearTimeout(timeoutID); // 清除定时器，防止函数执行
+                noButton.style.transform = "unset";
+                noButton.style.position = "unset";
+            }, 5000);
+        }
+    </script>
+</body>
+
+</html>
